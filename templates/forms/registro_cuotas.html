@@ -1,0 +1,91 @@
+{% extends "base-sesion-iniciada.html" %}
+
+{% block title %}Registro de Cuotas{% endblock %}
+
+{% block content %}
+
+<div class="container my-2">
+  <div class="text-center mb-4"><br>
+    <h1>Registrar Cuotas</h1>
+  </div>
+
+  <div class="container d-flex justify-content-center">
+    <form id="formCuotas" action="/registro-cuotas" method="POST" style="width:50vw; min-width:300px;">
+      <div class="row mb-3">
+        <div class="col">
+          <label class="form-label">Cliente:</label>
+          <select name="IdCliente" class="form-select" id="cliente-select">
+            {% for row in clientes %}
+            <option value="{{ row[0] }}">{{ row[1] }}</option>
+            {% endfor %}
+          </select>
+          <!-- <input type="text" class="form-control" name="IdCliente" placeholder="ID"> -->
+        </div>
+
+        <div class="col">
+          <label class="form-label">Cantidad de cuotas:</label>
+          <input id="cantcuotas" type="number" class="form-control" name="cantcuotas" placeholder="Cantidad de Cuotas">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Fecha de inicio:</label>
+        <input id="fechaini" type="date" class="form-control" name="fechaini" value="{{fechaDefault}}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Monto:</label>
+        <input id="monto" type="text" class="form-control" name="monto" placeholder="Monto">
+      </div>
+
+      <div>
+        <button onclick="registrarCuotas(event)" class="btn btn-success">
+          <i class="fa-solid fa-floppy-disk px-1" style="color: #ffffff;"></i>Registrar
+        </button>
+        <a href="" type="cancel" class="btn btn-danger">
+          <i class="fa-solid fa-ban px-1" style="color: #ffffff;"></i>Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  var socket = io.connect('http://127.0.0.1:8000/registro-cuotas');
+
+  socket.on('respuesta_registrarListaCuotas', function(response) {
+      if (response.ok) {
+        var form = document.getElementById("formCuotas");
+        form.reset();
+      }
+      //     var row = document.getElementById("cuota" + response.data);
+
+      //     row.querySelector(".btCuotaPendiente").style.display = "none";
+      //     row.querySelector(".btCuotaPagada").style.display = "var(--fa-display,inline-block)";
+      // }
+      // else
+      alert(response.mensaje);
+  });
+
+  function registrarCuotas(event) {
+    event.preventDefault();
+
+    id_cliente = document.getElementById("cliente-select").value;
+    cuotas = document.getElementById('cantcuotas').value;
+    fecha_inicio = document.getElementById('fechaini').value;
+    monto = document.getElementById('monto').value;
+    data =  {
+        "id_cliente": id_cliente,
+        "cuotas": cuotas,
+        "fecha_inicio": fecha_inicio,
+        "monto": monto
+    };
+    console.log(data);
+
+    socket.emit('registrarListaCuotas', data);
+    // location.reload(); // Esta línea recargará la página después de pagar la cuota
+  }
+</script>
+
+{% endblock %}

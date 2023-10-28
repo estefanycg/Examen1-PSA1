@@ -1,0 +1,61 @@
+{% extends "base-sesion-iniciada.html" %}
+
+{% block title %}Agregar Clientes{% endblock %}
+
+{% block content %}
+   <div class="container my-2">
+      <div class="text-center mb-4"><br>
+         <h1>Registrar Cliente</h1>
+      </div>
+
+      <div class="container d-flex justify-content-center">
+  <form action=" " method="post" style="width:50vw; min-width:300px;">
+    <div class="row mb-3">
+      <div class="col">
+        <label class="form-label">Nombre:</label>
+        <input type="text" class="form-control" name="nombre" placeholder="Nombre">
+      </div>
+
+      <div class="col">
+        <label class="form-label">Apellido:</label>
+        <input type="text" class="form-control" name="apellido" placeholder="Apellido">
+      </div>
+    </div>
+    <p class="text2">{{ error_message }}</p>
+
+    <!--
+    <div class="mb-3">
+      <label class="form-label">Teléfono:</label>
+      <input type="text" class="form-control" name="telefono" placeholder="Teléfono">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Correo Electrónico:</label>
+      <input type="text" class="form-control" name="correo" placeholder="Correo Electrónico">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Dirección:</label>
+      <input type="text" class="form-control" name="direccion" placeholder="Dirección">
+    </div>
+
+    -->
+
+    <div>
+      <button type="submit" class="btn btn-success" name="submit">
+        <i class="fa-solid fa-floppy-disk px-1" id="guardarCliente" style="color: #ffffff;"></i>Registrar
+      </button>
+      <a href="" type="cancel" class="btn btn-danger">
+        <i class="fa-solid fa-ban px-1" id="cancelarRegistro" style="color: #ffffff;"></i>Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+</div>
+
+{% if success_message %}
+<script>
+  alert("{{ success_message }}");  // Muestra una alerta de JavaScript con el mensaje de éxito
+</script>
+{% endif %}
+{% endblock %}

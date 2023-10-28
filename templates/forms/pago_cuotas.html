@@ -1,0 +1,158 @@
+{% extends "base-sesion-iniciada.html" %}
+{% block title %}Pago de Cuotas{% endblock %}
+{% block content %}
+
+<div class="container my-2">
+    <div class="text-center mb-4"><br>
+        <h1>Pago de Cuotas</h1>
+    </div>
+
+    <div class="container d-flex justify-content-center">
+        <form action="" method="GET" style="width: 50vw; min-width: 300px;">
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Cliente:
+                        <!-- <input type="text" class="form-control" name="IdCliente" placeholder="Id Cliente"> -->
+                    </label>
+                    <select name="IdCliente" class="form-select" id="cliente-select">
+                      {% for row in clientes %}
+                      <option {% if cliente_seleccionado==row[0]|string %}selected{% endif %} value="{{ row[0] }}">{{ row[1] }}</option>
+                      {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Seleccionar Estado:</label>
+                    <select class="form-select" name="estadocuota">
+                        <option {% if estado_seleccionado==1 %}selected{% endif %} value="pagadas">Pagadas</option>
+                        <option {% if estado_seleccionado==0 %}selected{% endif %} value="pendientes">Pendientes</option>
+                        <option {% if estado_seleccionado=="*" %}selected{% endif %} value="todas">Todas</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-warning" style="color: #ffffff;">
+                    <i class="fa-solid fa-search px-1" style="color: #ffffff;"></i>Buscar
+                </button>
+                <a href="" type="cancel" class="btn btn-danger">
+                    <i class="fa-solid fa-ban px-1" style="color: #ffffff;"></i>Cancelar
+                </a>
+            </div>
+        </form>
+    </div><br>
+    <!--Tabla a mostrar el response de la consulta-->
+    <div class="table-responsive">
+        <table class="table table-hover text-center" style="font-family: 'Poppins', sans-serif;">
+            <thead class="table-success">
+                <tr>
+                    <th scope="col">ID Cliente</th>
+                    <th scope="col">Fecha de Pago</th>
+                    <th scope="col">Fecha Pago Realizado</th>
+                    <th scope="col">Monto</th>
+                    <th scope="col">Cuota</th>
+                    <th scope="col">Préstamo</th>
+                    <th scope="col">Referencia</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Reversión</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr id="cuota{{ row[0] }}">
+                    <td>{{ row[7] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ '----------' if row[6] == None else row[6]  }} </td>
+                    <td>Lps. {{ row[3] }}0</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[8] }}</td>
+                    <td>
+                        <div>
+                            {% if row[0] in idCuotasPendientes %}
+                                <button onclick="pagarCuota({{ row[0] }})" class="btn btn-success btCuotaPendiente">
+                                    <i class="fa-solid fa-floppy-disk px-1" style="color: #ffffff;"></i>Pagar
+                                </button>
+                            {% endif %}
+                            <a href="#" style="display: {% if row[4] == 1 %} var(--fa-display, inline-block) {% else %} none {% endif %};" class="btn btn-secondary disabled btCuotaPagada">Pagada</a>
+                        </div>
+                    </td>
+                    <td>
+                        {% if row[0] in idCuotasPagadas %}
+                            <!-- <form method="POST" action="/revertir-cuota">
+                                <input type="hidden" name="id_cuota" value={{ row[0] }}>
+                                <button type="submit" class="btn btn-danger btCuotaRevertir">
+                                    REVERTIR
+                                </button>
+                            </form> -->
+                            <button onclick="reversionPago({{ row[0] }})" class="btn btn-danger btCuotaRevertir">
+                                REVERTIR
+                            </button>
+                        {% else %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    var socket = io.connect('http://127.0.0.1:8000/pago');
+
+    // Realiza una solicitud al servidor para obtener la lista de idCuotas que cumplen el criterio
+    fetch('/ruta-para-obtener-idCuotas', {
+      method: 'GET',
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Almacena la lista de idCuotas obtenida
+        var cuotas_sin_pagar = data;
+
+        // Luego, en la parte del HTML donde se muestra la tabla de registros, evalúa si el idCuotas de cada fila está en la lista
+        var rows = document.querySelectorAll("tr[id^='cuota']");
+
+        rows.forEach(row => {
+          var idCuota = parseInt(row.id.replace("cuota", ""), 10);
+
+          // Habilita o deshabilita el botón "Pagar" en función de si el idCuota actual está en la lista
+          if (cuotas_sin_pagar.includes(idCuota)) {
+            row.querySelector(".btCuotaPendiente button").disabled = false;
+          } else {
+            row.querySelector(".btCuotaPendiente button").style.display = "none";
+          }
+        });
+      })
+      .then(null, error => {
+        console.error('Error al obtener la lista de idCuotas:', error);
+      });
+
+    socket.on('respuesta_cambioEstadoCuota', function(response) {
+        if (response.ok) {
+            var row = document.getElementById("cuota" + response.data);
+
+            row.querySelector(".btCuotaPendiente").style.display = (response.estado == 0 ? "var(--fa-display,inline-block)" :  "none");
+            row.querySelector(".btCuotaPagada").style.display = (response.estado == 0 ? "none" : "var(--fa-display,inline-block)");
+            row.querySelector(".btCuotaRevertir").style.display = (response.estado == 0 ? "none" : "var(--fa-display,inline-block)");
+        }
+        else
+            alert(response.mensaje);
+
+        //location.reload(); // Esta línea recargará la página después de pagar la cuota
+    });
+
+    function pagarCuota(idCuota) {
+      socket.emit('realizarPagoCuota', { "id_cuota": idCuota });
+      location.reload(); // Esta línea recargará la página después de pagar la cuota
+    }
+
+    function reversionPago(idCuota) {
+      socket.emit('realizarReversionCuota', { "id_cuota": idCuota });
+      location.reload(); // Esta línea recargará la página después de pagar la cuota
+    }
+
+  </script>
+
+
+{% endblock %}

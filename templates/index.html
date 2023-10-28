@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='imagenes/logo/Logo3.svg')}}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>PayPro Hondras</title>
+</head>
+
+<body>
+    <div class="splash">
+        <div class="splash-content">
+            <div id="imagenFondo"
+                style="background-image: url('{{ url_for('static', filename='imagenes/img1.jpg') }}');"></div>
+            <div class="logo_splash">
+                <img src="{{ url_for('static', filename='imagenes/logo/Logo1.svg') }}" alt="Logo" width="40%">
+            </div>
+
+            <div class="boton_splash">
+                <div class="boton">
+                    <a class="text" href="login">ENTRAR</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es-HN">
+<head>
+    
+    <meta charset="UTF-8">
+    <link rel="icon" href="{{ url_for('static', filename='imagenes/logo/Logo3.svg')}}" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap5 CDN  -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- Font Awesome iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;1,700&family=Lato:ital,wght@1,100&family=Montserrat:wght@300&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,200&family=Roboto:wght@100&display=swap"
+        rel="stylesheet">
+    <title>{% block title %}PayPro Hondras{% endblock %}</title>
+</head>
+<body>
+    <div id="mySidebar" class="sidebar">
+        <li> <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"> × </a></li>
+        <li> <a href="{{ url_for('pageInicio') }}"><img src="{{ url_for('static', filename='imagenes/logo/Logo2.svg') }}" alt=""
+                    class="small-img"></a></li>
+        <li> <a class="over my-class" href="{{ url_for('pageInicio') }}"><img src="" alt="">Inicio</a></li>
+        <li> <a class="over my-class" href="{{ url_for('listaClientes') }}"><img src="" alt="">Clientes</a>
+        <li> <a class="over my-class" href="{{ url_for('pagoCuotas') }}"><img src="" alt="">Pagos de cuotas</a></li>
+        <li> <a class="over my-class" href="{{ url_for('registroCuotas') }}"><img src="" alt="">Registro de cuotas</a>
+        </li>
+    </div>
+    </ul>
+    </div>
+    <div id="main">
+        <div style="background-color: #1660A8;">
+            <div class="content-menu">
+                <button class="openbtn" onclick="openNav()">☰</button>
+                <div class="content-cerrar">
+                    <div id="usuario" class="usuario">{{ usuario }}</div>
+
+                    <a class="btn-cerrar" href="{{ url_for('cerrarSesion') }}">CERRAR SESIÓN</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            function openNav() {
+                document.getElementById("mySidebar").style.width = "250px";
+                document.getElementById("main").style.marginLeft = "250px";
+            }
+
+            function closeNav() {
+                document.getElementById("mySidebar").style.width = "0";
+                document.getElementById("main").style.marginLeft = "0";
+            }
+        </script>
+
+    </div>
+    <!-- Navbar -->
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+</html>

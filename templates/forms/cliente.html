@@ -1,0 +1,67 @@
+{% extends "base-sesion-iniciada.html" %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('pageAgregarCliente') }}"" class="btn mb-3 mt-1 text-light" style="background-color: #347B3F;"><i
+    class="fas fa-user-plus px-1" style="color: #ffffff;"></i>Agregar Cliente</a>
+<button class="btn mb-3 mt-1 text-light" onclick="refresh()" style="background-color: #347B3F;"><i
+  class="fas fa-refresh px-1" style="color: #ffffff;"></i>Actualizar</button>
+
+<div class="table-responsive">
+  <table id="clientes" class="table table-hover text-center" style="font-family: 'Poppins', sans-serif;">
+    <thead class="table-success">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nombre</th>
+        <!--<th scope="col">Apellido</th>
+        <th scope="col">Teléfono</th>
+        <th scope="col">Correo</th>
+        <th scope="col">Dirección</th>
+        <th scope="col">Acciones</th>
+        -->
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    // http://127.0.0.1:PUERTO/NAMESPACE
+    var socket = io.connect('http://127.0.0.1:8000/clientes');
+
+    // Capturar el evento "respuesta_listaClientes" iniciado por el Socket Server
+    socket.on('respuesta_listaClientes', function(response) {
+
+        // Instanciamos el body de la tabla html
+        var body = document.getElementById('clientes').getElementsByTagName('tbody')[0];
+
+        console.log("respuesta_listaClientes: " + response);
+        // Usamos response -> data porque 'data' le llamamos a la propiedad en el servidor al ejecutar emit('respuesta_listaClientes'...
+        response.data.forEach(function (item) {
+            console.log(item);
+            // Agregar fila a una tabla html usando javascript
+            var row = body.insertRow();
+            var idCell = row.insertCell(0);
+            var nameCell = row.insertCell(1);
+
+            idCell.innerHTML = item[0];
+            nameCell.innerHTML = item[1];
+        });
+        // body.innerHTML = JSON.stringify(data, null, 4);
+    });
+
+    function refresh() {
+      // Vacíamos la tabla, solo para que se note el efecto de llenado (Se puede quitar)
+      var body = document.getElementById('clientes').getElementsByTagName('tbody')[0].innerHTML = "";
+      // Disparar el evento "solicitar_listaClientes", que luego es capturado por el Socket Server
+      socket.emit('solicitar_listaClientes');
+    }
+
+    // Llamar refresh al cargar la página, también se llama con el botón 'Refrescar'
+    refresh();
+</script>
+
+{% endblock %}

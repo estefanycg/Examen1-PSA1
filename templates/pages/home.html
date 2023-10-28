@@ -1,0 +1,17 @@
+{% extends "base-sesion-iniciada.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<div class="fondo">
+  <div class="blur">
+    <div class="blur1">
+      <img id="logo" src="{{ url_for('static', filename='imagenes/logo/Logo2.svg') }}" alt="" width="200px"><br>
+      <h1 class="appname" id="appName">BIENVENIDO</h1>
+      <h5 class="msg" id="appName">Comienza ya a registrar las cuotas de tus clientes</h5>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
